@@ -16,6 +16,7 @@
 
 package uk.gov.hmrc.perftests.example
 
+import io.gatling.core.Predef._
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.example.Requests._
 
@@ -28,7 +29,39 @@ class Simulation extends PerformanceTestRunner {
   )
 
   setup("AddFinancialInstitution", "Adding Financial Institution").withActions (
-    postCRSFATCADashboardPage,
+    getAddFiPageRedirect,
+    getAddFiFormPage,
+    postAddFiForm,
+    getIdentificationNumbersPage,
+    postIdentificationNumbersPage,
+    getUtrPage,
+    postUtrPage,
+    getHaveGiinPage,
+    postHaveGiinPage,
+    getGiinPage,
+    postGiinPage,
+    getAddressUkPage,
+    postAddressUkPage,
+    getContactNamePage,
+    postContactNamePage,
+    getContactEmailPage,
+    postContactEmailPage,
+    getHavePhonePage,
+    postHavePhonePage,
+    getPhonePage,
+    postPhonePage,
+    getHaveSecondContactPage,
+    postHaveSecondContactPage,
+    getSecondContactNamePage,
+    postSecondContactNamePage,
+    getSecondContactEmailPage,
+    postSecondContactEmailPage,
+    getSecondContactHavePhonePage,
+    postSecondContactHavePhonePage,
+    getSecondContactPhonePage,
+    postSecondContactPhonePage,
+    getCheckAnswersPage,
+    postCheckAnswersPage
 
   )
   runSimulation()
