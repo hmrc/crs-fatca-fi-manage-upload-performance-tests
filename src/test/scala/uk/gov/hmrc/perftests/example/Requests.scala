@@ -359,5 +359,45 @@ object Requests extends ServicesConfiguration {
       .formParam("csrfToken", "${csrfToken}")
       .check(status.in(200, 303))
 
+  val getRemoveUserAccessPage: HttpRequestBuilder =
+    http("Get Remove User Access Page")
+      .get(s"$baseUrl$route/remove/user-access/$staticId")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postRemoveUserAccessPage: HttpRequestBuilder =
+    http("Post Remove User Access Page")
+      .post(s"$baseUrl$route/remove/user-access/$staticId")
+      .formParam("csrfToken", "${csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+      .check(header("Location").saveAs("removeOtherAccessPageUrl"))
+
+  val getRemoveOtherAccessPage: HttpRequestBuilder =
+    http("Get Remove Other Access Page")
+      .get(s"$baseUrl$route/remove/other-access/$staticId")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postRemoveOtherAccessPage: HttpRequestBuilder =
+    http("Post Remove Other Access Page")
+      .post(s"$baseUrl$route/remove/other-access")
+      .formParam("csrfToken", "${csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+      .check(header("Location").saveAs("removeFiPageUrl"))
+
+  val getRemoveFiPage: HttpRequestBuilder =
+    http("Get Remove FI Page")
+      .get(baseUrl + "${removeFiPageUrl}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postRemoveFiPage: HttpRequestBuilder =
+    http("Post Remove FI Page")
+      .post(baseUrl + "${removeFiPageUrl}")
+      .formParam("csrfToken", "${csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
 
 }
