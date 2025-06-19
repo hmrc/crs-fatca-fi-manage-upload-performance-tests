@@ -24,11 +24,12 @@ import uk.gov.hmrc.performance.conf.ServicesConfiguration
 
 object Requests extends ServicesConfiguration {
 
-  val baseUrl: String     = baseUrlFor("crs-fatca-fi-management-frontend")
+  val baseUrl: String = baseUrlFor("crs-fatca-fi-management-frontend")
   val baseUrlAuth: String = baseUrlFor("auth-frontend")
-  val route: String       = "/manage-your-crs-and-fatca-financial-institutions"
-  val authRoute: String   = "/auth-login-stub/gg-sign-in"
-  val amazonUrlPattern    = """action="(.*?)""""
+  val route: String = "/manage-your-crs-and-fatca-financial-institutions"
+  val authRoute: String = "/auth-login-stub/gg-sign-in"
+  val amazonUrlPattern = """action="(.*?)""""
+  val staticId = "683373339"
 
   def inputSelectorByName(name: String): Expression[String] = s"input[name='$name']"
 
@@ -47,8 +48,12 @@ object Requests extends ServicesConfiguration {
       .formParam("affinityGroup", "Organisation")
       .formParam("enrolment[0].name", "HMRC-FATCA-ORG")
       .formParam("enrolment[0].taxIdentifier[0].name", "FATCAID")
-      .formParam("enrolment[0].taxIdentifier[0].value", "XE9ATCA0009234567")
+      .formParam("enrolment[0].taxIdentifier[0].value", "XE3ATCA0009234567")
       .formParam("enrolment[0].state", "Activated")
+      .formParam("enrolment[4].name", "IR-CT")
+      .formParam("enrolment[4].taxIdentifier[0].name", "UTR")
+      .formParam("enrolment[4].taxIdentifier[0].value", "333")
+      .formParam("enrolment[4].state", "Activated")
       .check(status.is(303))
       .check(header("Location").is(baseUrl + route).saveAs("LandingPage"))
 
@@ -65,7 +70,7 @@ object Requests extends ServicesConfiguration {
 
   val getAddFiFormPage: HttpRequestBuilder =
     http("Get Add FI Form Page")
-      .get(baseUrl+"${addFiPageUrl}")
+      .get(baseUrl + "${addFiPageUrl}")
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
       .check(bodyString.saveAs("responseBody"))
@@ -142,7 +147,7 @@ object Requests extends ServicesConfiguration {
 
   val postAddressUkPage: HttpRequestBuilder =
     http("Submit UK-Address")
-      .post(baseUrl +  route + "/address-uk")
+      .post(baseUrl + route + "/address-uk")
       .formParam("csrfToken", "${csrfToken}")
       .formParam("addressLine1", "Test Street")
       .formParam("addressLine2", "")
@@ -270,7 +275,6 @@ object Requests extends ServicesConfiguration {
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
-
   val postSecondContactPhonePage: HttpRequestBuilder =
     http("Submit Second Contact Phone Page")
       .post(baseUrl + "${SecondContactPhonePageUrl}")
@@ -291,4 +295,69 @@ object Requests extends ServicesConfiguration {
       .formParam("csrfToken", "${csrfToken}")
       .check(status.is(303))
       .check(header("Location").saveAs("SubmissionConfirmationUrl"))
+
+  val getManageFiPageRedirect: HttpRequestBuilder =
+    http("Get Manage FI Redirect")
+      .get("${LandingPage}/your-fis")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val getStartChangeFlowPage: HttpRequestBuilder =
+    http("GET Start Change Flow Page")
+      .get(s"$baseUrl$route/registered-business/change-answers/$staticId")
+      .check(status.is(200))
+
+  val getChangeBusinessNamePage: HttpRequestBuilder =
+    http("GET Change Business Name Page")
+      .get(baseUrl+ route + "/registered-business/change-is-this-your-business-name")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postChangeBusinessNamePage: HttpRequestBuilder =
+    http("POST Change Business Name Page")
+      .post( baseUrl+ route + "/registered-business/change-is-this-your-business-name")
+      .formParam("csrfToken", "${csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+      .check(header("Location").saveAs("ChangeGiinPageUrl"))
+
+  val getChangeHaveGiinPage: HttpRequestBuilder =
+    http("GET Change Have GIIN Page")
+      .get(baseUrl + "${ChangeGiinPageUrl}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postChangeHaveGiinPage: HttpRequestBuilder =
+    http("POST Change Have GIIN Page")
+      .post(s"$baseUrl$route/change-have-giin")
+      .formParam("csrfToken", "${csrfToken}")
+      .formParam("value", "false")
+      .check(status.is(303))
+
+  val getChangeAddressPage: HttpRequestBuilder =
+    http("GET Change Address Correct Page")
+      .get(s"$baseUrl$route/registered-business/change-is-the-address-correct")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postChangeAddressPage: HttpRequestBuilder =
+    http("POST Change Address Correct Page")
+      .post(s"$baseUrl$route/registered-business/change-is-the-address-correct")
+      .formParam("csrfToken", "${csrfToken}")
+      .formParam("value", "true")
+      .check(status.is(303))
+
+  val getChangeCheckAnswersPage: HttpRequestBuilder =
+    http("GET Change Check Answers Page")
+      .get(s"$baseUrl$route/registered-business/change-answers/$staticId")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postChangeFinalSubmit: HttpRequestBuilder =
+    http("POST Change Final Submit")
+      .post(s"$baseUrl$route/registered-business/change-answers")
+      .formParam("csrfToken", "${csrfToken}")
+      .check(status.in(200, 303))
+
+
 }
