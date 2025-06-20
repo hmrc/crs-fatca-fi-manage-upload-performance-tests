@@ -64,9 +64,6 @@ class Simulation extends PerformanceTestRunner {
   )
 
   setup("ChangeFinancialInstitution", "Changing Financial Institution").withActions (
-    getAuthLoginPage,
-    postAuthLoginCredentials,
-    getCRSFATCADashboardPage,
     getManageFiPageRedirect,
     getStartChangeFlowPage,
     getChangeBusinessNamePage,
@@ -77,6 +74,15 @@ class Simulation extends PerformanceTestRunner {
     postChangeAddressPage,
     getChangeCheckAnswersPage,
     postChangeFinalSubmit
+  )
+
+  setup("RemoveFinancialInstitution", "Removing Financial Institution").withActions (
+    getRemoveUserAccessPage,
+    postRemoveUserAccessPage,
+    getRemoveOtherAccessPage,
+    postRemoveOtherAccessPage,
+    getRemoveFiPage,
+    postRemoveFiPage
   )
 
   runSimulation()
