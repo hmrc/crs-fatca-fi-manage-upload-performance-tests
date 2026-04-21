@@ -15,7 +15,6 @@
  */
 
 package uk.gov.hmrc.perftests.example
-
 import uk.gov.hmrc.performance.simulation.PerformanceTestRunner
 import uk.gov.hmrc.perftests.example.Requests._
 
@@ -70,10 +69,13 @@ class Simulation extends PerformanceTestRunner {
     postChangeBusinessNamePage,
     getChangeHaveGiinPage,
     postChangeHaveGiinPage,
+    getChangeGiinPage,
+    postChangeGiinPage,
     getChangeAddressPage,
     postChangeAddressPage,
     getChangeCheckAnswersPage,
-    postChangeFinalSubmit
+    postChangeFinalSubmit,
+    getChangeDetailsUpdatedPage
   )
 
   setup("RemoveFinancialInstitution", "Removing Financial Institution").withActions (
