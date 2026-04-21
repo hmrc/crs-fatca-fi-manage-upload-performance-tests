@@ -48,7 +48,7 @@ object Requests extends ServicesConfiguration {
       .formParam("affinityGroup", "Organisation")
       .formParam("enrolment[0].name", "HMRC-FATCA-ORG")
       .formParam("enrolment[0].taxIdentifier[0].name", "FATCAID")
-      .formParam("enrolment[0].taxIdentifier[0].value", "XE3ATCA0009234567")
+      .formParam("enrolment[0].taxIdentifier[0].value", "XE2ATCA0009234567")
       .formParam("enrolment[0].state", "Activated")
       .formParam("enrolment[4].name", "IR-CT")
       .formParam("enrolment[4].taxIdentifier[0].name", "UTR")
@@ -251,7 +251,7 @@ object Requests extends ServicesConfiguration {
     http("Submit 2nd-Contact-Email")
       .post(baseUrl + "#{SecondContactEmailPageUrl}")
       .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "varg.james@gmail.com")
+      .formParam("value", "test@test.com")
       .check(status.is(303))
       .check(header("Location").saveAs("SecondHavePhonePageUrl"))
 
@@ -298,7 +298,7 @@ object Requests extends ServicesConfiguration {
 
   val getManageFiPageRedirect: HttpRequestBuilder =
     http("Get Manage FI Redirect")
-      .get("#{LandingPage}/your-fis")
+      .get(baseUrl + route + "/your-fis")
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
@@ -323,7 +323,7 @@ object Requests extends ServicesConfiguration {
 
   val getChangeHaveGiinPage: HttpRequestBuilder =
     http("GET Change Have GIIN Page")
-      .get(baseUrl + "#{ChangeGiinPageUrl}")
+      .get(baseUrl+ route + "/change-have-giin")
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
@@ -331,7 +331,20 @@ object Requests extends ServicesConfiguration {
     http("POST Change Have GIIN Page")
       .post(s"$baseUrl$route/change-have-giin")
       .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "false")
+      .formParam("value", "true")
+      .check(status.is(303))
+
+  val getChangeGiinPage: HttpRequestBuilder =
+    http("Get GIIN Page")
+      .get(baseUrl + route + "/change-giin")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postChangeGiinPage: HttpRequestBuilder =
+    http("Submit GIIN")
+      .post(baseUrl + route + "/change-giin")
+      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("value", "98096B.00000.LE.350")
       .check(status.is(303))
 
   val getChangeAddressPage: HttpRequestBuilder =
@@ -346,10 +359,11 @@ object Requests extends ServicesConfiguration {
       .formParam("csrfToken", "#{csrfToken}")
       .formParam("value", "true")
       .check(status.is(303))
+      .check(header("Location").saveAs("changeCheckAnswersPageUrl"))
 
   val getChangeCheckAnswersPage: HttpRequestBuilder =
     http("GET Change Check Answers Page")
-      .get(s"$baseUrl$route/registered-business/change-answers/$staticId")
+      .get(baseUrl + "#{changeCheckAnswersPageUrl}")
       .check(status.is(200))
       .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
 
@@ -357,7 +371,15 @@ object Requests extends ServicesConfiguration {
     http("POST Change Final Submit")
       .post(s"$baseUrl$route/registered-business/change-answers")
       .formParam("csrfToken", "#{csrfToken}")
-      .check(status.in(200, 303))
+      .check(status.is(303))
+      .check(header("Location").is(s"$route/details-updated"))
+      .check(header("Location").saveAs("changeDetailsUpdatedPageUrl"))
+
+  val getChangeDetailsUpdatedPage: HttpRequestBuilder =
+    http("GET Change Details Updated Page")
+      .get(baseUrl + "#{changeDetailsUpdatedPageUrl}")
+      .check(status.is(200))
+      .check(substring("Details updated"))
 
   val getRemoveUserAccessPage: HttpRequestBuilder =
     http("Get Remove User Access Page")
