@@ -29,7 +29,7 @@ object Requests extends ServicesConfiguration {
   val route: String = "/manage-your-crs-and-fatca-financial-institutions"
   val authRoute: String = "/auth-login-stub/gg-sign-in"
   val amazonUrlPattern = """action="(.*?)""""
-  val staticId = "683373339"
+  val staticId = "TES683373339"
 
   def inputSelectorByName(name: String): Expression[String] = s"input[name='$name']"
 
@@ -48,7 +48,7 @@ object Requests extends ServicesConfiguration {
       .formParam("affinityGroup", "Organisation")
       .formParam("enrolment[0].name", "HMRC-FATCA-ORG")
       .formParam("enrolment[0].taxIdentifier[0].name", "FATCAID")
-      .formParam("enrolment[0].taxIdentifier[0].value", "XE2ATCA0009234567")
+      .formParam("enrolment[0].taxIdentifier[0].value", "2009234567")
       .formParam("enrolment[0].state", "Activated")
       .formParam("enrolment[4].name", "IR-CT")
       .formParam("enrolment[4].taxIdentifier[0].name", "UTR")
