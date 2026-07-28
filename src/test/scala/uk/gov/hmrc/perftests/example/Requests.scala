@@ -18,6 +18,7 @@ package uk.gov.hmrc.perftests.example
 
 import io.gatling.core.Predef._
 import io.gatling.core.session.Expression
+import io.gatling.core.session.el.*
 import io.gatling.http.Predef._
 import io.gatling.http.request.builder.HttpRequestBuilder
 import uk.gov.hmrc.performance.conf.ServicesConfiguration
@@ -41,21 +42,21 @@ object Requests extends ServicesConfiguration {
   val postAuthLoginCredentials: HttpRequestBuilder =
     http("Enter Auth login credentials")
       .post(baseUrlAuth + authRoute)
-      .formParam("authorityId", "")
-      .formParam("redirectionUrl", baseUrl + route)
-      .formParam("credentialStrength", "strong")
-      .formParam("confidenceLevel", "50")
-      .formParam("affinityGroup", "Organisation")
-      .formParam("enrolment[0].name", "HMRC-FATCA-ORG")
-      .formParam("enrolment[0].taxIdentifier[0].name", "FATCAID")
-      .formParam("enrolment[0].taxIdentifier[0].value", "2009234567")
-      .formParam("enrolment[0].state", "Activated")
-      .formParam("enrolment[4].name", "IR-CT")
-      .formParam("enrolment[4].taxIdentifier[0].name", "UTR")
-      .formParam("enrolment[4].taxIdentifier[0].value", "333")
-      .formParam("enrolment[4].state", "Activated")
+      .formParam("authorityId", "".el[String])
+      .formParam("redirectionUrl", (baseUrl + route).el[String])
+      .formParam("credentialStrength", "strong".el[String])
+      .formParam("confidenceLevel", "50".el[String])
+      .formParam("affinityGroup", "Organisation".el[String])
+      .formParam("enrolment[0].name", "HMRC-FATCA-ORG".el[String])
+      .formParam("enrolment[0].taxIdentifier[0].name", "FATCAID".el[String])
+      .formParam("enrolment[0].taxIdentifier[0].value", "2009234567".el[String])
+      .formParam("enrolment[0].state", "Activated".el[String])
+      .formParam("enrolment[4].name", "IR-CT".el[String])
+      .formParam("enrolment[4].taxIdentifier[0].name", "UTR".el[String])
+      .formParam("enrolment[4].taxIdentifier[0].value", "333".el[String])
+      .formParam("enrolment[4].state", "Activated".el[String])
       .check(status.is(303))
-      .check(header("Location").is(baseUrl + route).saveAs("LandingPage"))
+      .check(header("Location".el[String]).is(baseUrl + route).saveAs("LandingPage"))
 
   val getCRSFATCADashboardPage: HttpRequestBuilder =
     http("Get CRS FATCA Dashboard Page")
@@ -66,7 +67,7 @@ object Requests extends ServicesConfiguration {
     http("Get Add FI Redirect")
       .get("#{LandingPage}/add")
       .check(status.is(303))
-      .check(header("Location").saveAs("addFiPageUrl"))
+      .check(header("Location".el[String]).saveAs("addFiPageUrl"))
 
   val getAddFiFormPage: HttpRequestBuilder =
     http("Get Add FI Form Page")
@@ -78,10 +79,10 @@ object Requests extends ServicesConfiguration {
   val postAddFiForm: HttpRequestBuilder =
     http("Submit Add FI Form")
       .post(baseUrl + "/manage-your-crs-and-fatca-financial-institutions/name")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "My Financial Institution")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "My Financial Institution".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("IdentificationNumbersPageUrl"))
+      .check(header("Location".el[String]).saveAs("IdentificationNumbersPageUrl"))
 
   val getIdentificationNumbersPage: HttpRequestBuilder =
     http("Get Identification-Numbers Page")
@@ -92,10 +93,10 @@ object Requests extends ServicesConfiguration {
   val postIdentificationNumbersPage: HttpRequestBuilder =
     http("Submit Identification-Numbers")
       .post(baseUrl + "#{IdentificationNumbersPageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value[0]", "UTR")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value[0]", "UTR".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("UtrPageUrl"))
+      .check(header("Location".el[String]).saveAs("UtrPageUrl"))
 
   val getUtrPage: HttpRequestBuilder =
     http("Get UTR Page")
@@ -106,10 +107,10 @@ object Requests extends ServicesConfiguration {
   val postUtrPage: HttpRequestBuilder =
     http("Submit UTR")
       .post(baseUrl + "#{UtrPageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "1234567890")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "1234567890".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("HaveGiinPageUrl"))
+      .check(header("Location".el[String]).saveAs("HaveGiinPageUrl"))
 
   val getHaveGiinPage: HttpRequestBuilder =
     http("Get Have-GIIN Page")
@@ -120,10 +121,10 @@ object Requests extends ServicesConfiguration {
   val postHaveGiinPage: HttpRequestBuilder =
     http("Submit Have-GIIN (Yes)")
       .post(baseUrl + "#{HaveGiinPageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("GiinPageUrl"))
+      .check(header("Location".el[String]).saveAs("GiinPageUrl"))
 
   val getGiinPage: HttpRequestBuilder =
     http("Get GIIN Page")
@@ -134,10 +135,10 @@ object Requests extends ServicesConfiguration {
   val postGiinPage: HttpRequestBuilder =
     http("Submit GIIN")
       .post(baseUrl + "#{GiinPageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "98096B.00000.LE.350")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "98096B.00000.LE.350".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("AddressUkPageUrl"))
+      .check(header("Location".el[String]).saveAs("AddressUkPageUrl"))
 
   val getAddressUkPage: HttpRequestBuilder =
     http("Get UK-Address Page")
@@ -148,14 +149,14 @@ object Requests extends ServicesConfiguration {
   val postAddressUkPage: HttpRequestBuilder =
     http("Submit UK-Address")
       .post(baseUrl + route + "/address-uk")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("addressLine1", "Test Street")
-      .formParam("addressLine2", "")
-      .formParam("addressLine3", "Test City")
-      .formParam("addressLine4", "")
-      .formParam("postCode", "TF3 7BT")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("addressLine1", "Test Street".el[String])
+      .formParam("addressLine2", "".el[String])
+      .formParam("addressLine3", "Test City".el[String])
+      .formParam("addressLine4", "".el[String])
+      .formParam("postCode", "TF3 7BT".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("ContactNamePageUrl"))
+      .check(header("Location".el[String]).saveAs("ContactNamePageUrl"))
 
   val getContactNamePage: HttpRequestBuilder =
     http("Get Contact-Name Page")
@@ -166,10 +167,10 @@ object Requests extends ServicesConfiguration {
   val postContactNamePage: HttpRequestBuilder =
     http("Submit Contact-Name")
       .post(baseUrl + route + "/contact-name")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "James Bond 007")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "James Bond 007".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("ContactEmailPageUrl"))
+      .check(header("Location".el[String]).saveAs("ContactEmailPageUrl"))
 
   val getContactEmailPage: HttpRequestBuilder =
     http("Get Contact-Email Page")
@@ -180,10 +181,10 @@ object Requests extends ServicesConfiguration {
   val postContactEmailPage: HttpRequestBuilder =
     http("Submit Contact-Email")
       .post(baseUrl + "#{ContactEmailPageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "test@test.com")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "test@test.com".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("HavePhonePageUrl"))
+      .check(header("Location".el[String]).saveAs("HavePhonePageUrl"))
 
   val getHavePhonePage: HttpRequestBuilder =
     http("Get Have-Phone Page")
@@ -194,10 +195,10 @@ object Requests extends ServicesConfiguration {
   val postHavePhonePage: HttpRequestBuilder =
     http("Submit Have-Phone (Yes)")
       .post(baseUrl + "#{HavePhonePageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("PhonePageUrl"))
+      .check(header("Location".el[String]).saveAs("PhonePageUrl"))
 
   val getPhonePage: HttpRequestBuilder =
     http("Get Phone Page")
@@ -208,10 +209,10 @@ object Requests extends ServicesConfiguration {
   val postPhonePage: HttpRequestBuilder =
     http("Submit Phone")
       .post(baseUrl + "#{PhonePageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "1123")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "1123".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("HaveSecondContactPageUrl"))
+      .check(header("Location".el[String]).saveAs("HaveSecondContactPageUrl"))
 
   val getHaveSecondContactPage: HttpRequestBuilder =
     http("Get Have-Second-Contact Page")
@@ -222,10 +223,10 @@ object Requests extends ServicesConfiguration {
   val postHaveSecondContactPage: HttpRequestBuilder =
     http("Submit Have-Second-Contact (Yes)")
       .post(baseUrl + "#{HaveSecondContactPageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("SecondContactNamePageUrl"))
+      .check(header("Location".el[String]).saveAs("SecondContactNamePageUrl"))
 
   val getSecondContactNamePage: HttpRequestBuilder =
     http("Get 2nd-Contact-Name Page")
@@ -236,10 +237,10 @@ object Requests extends ServicesConfiguration {
   val postSecondContactNamePage: HttpRequestBuilder =
     http("Submit 2nd-Contact-Name")
       .post(baseUrl + "#{SecondContactNamePageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "James Bond")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "James Bond".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("SecondContactEmailPageUrl"))
+      .check(header("Location".el[String]).saveAs("SecondContactEmailPageUrl"))
 
   val getSecondContactEmailPage: HttpRequestBuilder =
     http("Get 2nd-Contact-Email Page")
@@ -250,10 +251,10 @@ object Requests extends ServicesConfiguration {
   val postSecondContactEmailPage: HttpRequestBuilder =
     http("Submit 2nd-Contact-Email")
       .post(baseUrl + "#{SecondContactEmailPageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "test@test.com")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "test@test.com".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("SecondHavePhonePageUrl"))
+      .check(header("Location".el[String]).saveAs("SecondHavePhonePageUrl"))
 
   val getSecondContactHavePhonePage: HttpRequestBuilder =
     http("Get Second Contact Have Phone Page")
@@ -264,10 +265,10 @@ object Requests extends ServicesConfiguration {
   val postSecondContactHavePhonePage: HttpRequestBuilder =
     http("Submit Second Contact Have Phone Page")
       .post(baseUrl + "#{SecondHavePhonePageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("SecondContactPhonePageUrl"))
+      .check(header("Location".el[String]).saveAs("SecondContactPhonePageUrl"))
 
   val getSecondContactPhonePage: HttpRequestBuilder =
     http("Get Second Contact Phone Page")
@@ -278,10 +279,10 @@ object Requests extends ServicesConfiguration {
   val postSecondContactPhonePage: HttpRequestBuilder =
     http("Submit Second Contact Phone Page")
       .post(baseUrl + "#{SecondContactPhonePageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "343243")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "343243".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("CheckAnswersPageUrl"))
+      .check(header("Location".el[String]).saveAs("CheckAnswersPageUrl"))
 
   val getCheckAnswersPage: HttpRequestBuilder =
     http("Get Check Answers Page")
@@ -292,9 +293,9 @@ object Requests extends ServicesConfiguration {
   val postCheckAnswersPage: HttpRequestBuilder =
     http("Submit Check Answers Page")
       .post(baseUrl + "#{CheckAnswersPageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("SubmissionConfirmationUrl"))
+      .check(header("Location".el[String]).saveAs("SubmissionConfirmationUrl"))
 
   val getManageFiPageRedirect: HttpRequestBuilder =
     http("Get Manage FI Redirect")
@@ -316,10 +317,10 @@ object Requests extends ServicesConfiguration {
   val postChangeBusinessNamePage: HttpRequestBuilder =
     http("POST Change Business Name Page")
       .post( baseUrl+ route + "/registered-business/change-is-this-your-business-name")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("ChangeGiinPageUrl"))
+      .check(header("Location".el[String]).saveAs("ChangeGiinPageUrl"))
 
   val getChangeHaveGiinPage: HttpRequestBuilder =
     http("GET Change Have GIIN Page")
@@ -330,8 +331,8 @@ object Requests extends ServicesConfiguration {
   val postChangeHaveGiinPage: HttpRequestBuilder =
     http("POST Change Have GIIN Page")
       .post(s"$baseUrl$route/change-have-giin")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
 
   val getChangeGiinPage: HttpRequestBuilder =
@@ -343,8 +344,8 @@ object Requests extends ServicesConfiguration {
   val postChangeGiinPage: HttpRequestBuilder =
     http("Submit GIIN")
       .post(baseUrl + route + "/change-giin")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "98096B.00000.LE.350")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "98096B.00000.LE.350".el[String])
       .check(status.is(303))
 
   val getChangeAddressPage: HttpRequestBuilder =
@@ -356,10 +357,10 @@ object Requests extends ServicesConfiguration {
   val postChangeAddressPage: HttpRequestBuilder =
     http("POST Change Address Correct Page")
       .post(s"$baseUrl$route/registered-business/change-is-the-address-correct")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("changeCheckAnswersPageUrl"))
+      .check(header("Location".el[String]).saveAs("changeCheckAnswersPageUrl"))
 
   val getChangeCheckAnswersPage: HttpRequestBuilder =
     http("GET Change Check Answers Page")
@@ -370,10 +371,10 @@ object Requests extends ServicesConfiguration {
   val postChangeFinalSubmit: HttpRequestBuilder =
     http("POST Change Final Submit")
       .post(s"$baseUrl$route/registered-business/change-answers")
-      .formParam("csrfToken", "#{csrfToken}")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
       .check(status.is(303))
-      .check(header("Location").is(s"$route/details-updated"))
-      .check(header("Location").saveAs("changeDetailsUpdatedPageUrl"))
+      .check(header("Location".el[String]).is(s"$route/details-updated"))
+      .check(header("Location".el[String]).saveAs("changeDetailsUpdatedPageUrl"))
 
   val getChangeDetailsUpdatedPage: HttpRequestBuilder =
     http("GET Change Details Updated Page")
@@ -390,10 +391,10 @@ object Requests extends ServicesConfiguration {
   val postRemoveUserAccessPage: HttpRequestBuilder =
     http("Post Remove User Access Page")
       .post(s"$baseUrl$route/remove/user-access/$staticId")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("removeOtherAccessPageUrl"))
+      .check(header("Location".el[String]).saveAs("removeOtherAccessPageUrl"))
 
   val getRemoveOtherAccessPage: HttpRequestBuilder =
     http("Get Remove Other Access Page")
@@ -404,10 +405,10 @@ object Requests extends ServicesConfiguration {
   val postRemoveOtherAccessPage: HttpRequestBuilder =
     http("Post Remove Other Access Page")
       .post(s"$baseUrl$route/remove/other-access")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
-      .check(header("Location").saveAs("removeFiPageUrl"))
+      .check(header("Location".el[String]).saveAs("removeFiPageUrl"))
 
   val getRemoveFiPage: HttpRequestBuilder =
     http("Get Remove FI Page")
@@ -418,8 +419,8 @@ object Requests extends ServicesConfiguration {
   val postRemoveFiPage: HttpRequestBuilder =
     http("Post Remove FI Page")
       .post(baseUrl + "#{removeFiPageUrl}")
-      .formParam("csrfToken", "#{csrfToken}")
-      .formParam("value", "true")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
       .check(status.is(303))
 
 }
