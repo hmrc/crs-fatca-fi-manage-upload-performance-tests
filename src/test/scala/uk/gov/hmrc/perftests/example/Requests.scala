@@ -83,7 +83,7 @@ object Requests extends ServicesConfiguration {
       .formParam("value", "My Financial Institution".el[String])
       .check(status.is(303))
       .check(header("Location".el[String]).saveAs("HaveIdentificationNumbers"))
-      //.check(header("Location".el[String]).saveAs("IdentificationNumbersPageUrl"))
+
 
   val getHaveIdentificationNumbersPage: HttpRequestBuilder =
     http("Get have identification numbers page")
