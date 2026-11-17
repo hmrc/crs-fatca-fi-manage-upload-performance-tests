@@ -30,6 +30,8 @@ class Simulation extends PerformanceTestRunner {
     getAddFiPageRedirect,
     getAddFiFormPage,
     postAddFiForm,
+    getHaveIdentificationNumbersPage,
+    postHaveIdentificationNumbersPage,
     getIdentificationNumbersPage,
     postIdentificationNumbersPage,
     getUtrPage,

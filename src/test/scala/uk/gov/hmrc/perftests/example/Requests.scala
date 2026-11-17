@@ -82,6 +82,21 @@ object Requests extends ServicesConfiguration {
       .formParam("csrfToken", "#{csrfToken}".el[String])
       .formParam("value", "My Financial Institution".el[String])
       .check(status.is(303))
+      .check(header("Location".el[String]).saveAs("HaveIdentificationNumbers"))
+      //.check(header("Location".el[String]).saveAs("IdentificationNumbersPageUrl"))
+
+  val getHaveIdentificationNumbersPage: HttpRequestBuilder =
+    http("Get have identification numbers page")
+      .get(baseUrl + "#{HaveIdentificationNumbers}")
+      .check(status.is(200))
+      .check(css(inputSelectorByName("csrfToken"), "value").saveAs("csrfToken"))
+
+  val postHaveIdentificationNumbersPage: HttpRequestBuilder =
+    http("Post have identification numbers page")
+      .post(baseUrl + "#{HaveIdentificationNumbers}")
+      .formParam("csrfToken", "#{csrfToken}".el[String])
+      .formParam("value", "true".el[String])
+      .check(status.is(303))
       .check(header("Location".el[String]).saveAs("IdentificationNumbersPageUrl"))
 
   val getIdentificationNumbersPage: HttpRequestBuilder =
